@@ -1,6 +1,6 @@
 {
   "name": "neon-brew-mobile",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "private": true,
   "description": "Android packaging for the NEON BREW offline cafe game",
   "scripts": {
