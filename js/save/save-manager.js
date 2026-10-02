@@ -47,7 +47,9 @@ window.NEON_BREW_SAVE_MANAGER = Object.freeze({
   },
 
   clear(keys, storage = localStorage) {
-    for (const key of keys) storage.removeItem(key);
+    const keyList = Array.isArray(keys) ? keys : [keys];
+    const targetStorage = Array.isArray(keys) ? storage : localStorage;
+    for (const key of keyList) targetStorage.removeItem(key);
   },
 
   encodeExport(state, version) {

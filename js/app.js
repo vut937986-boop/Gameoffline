@@ -354,6 +354,84 @@
     $('prestigeInfo').textContent=`Mỗi lần chuyển sinh tiêu thụ 1 QC và tăng doanh thu vĩnh viễn 5%. Cần 200 ly đã phục vụ.`;
     $('crtToggle').textContent=`CRT: ${state.crt?'BẬT':'TẮT'}`;$('crtToggle').setAttribute('aria-pressed',String(!!state.crt));
   }
+  function storeMilestones(){
+    return [
+      {id:'starter',level:1,title:'Quầy nhỏ',summary:'Một quán nhỏ vừa mở cửa.',visual:'small'},
+      {id:'neon',level:2,title:'Neon sign',summary:'Đèn sáng lên và quán bắt đầu nổi bật.',visual:'neon'},
+      {id:'machine',level:3,title:'Máy pha mới',summary:'Phục vụ trơn tru hơn.',visual:'machine'},
+      {id:'tables',level:5,title:'Bàn ngoài trời',summary:'Khách có chỗ ngồi chờ.',visual:'tables'},
+      {id:'delivery',level:7,title:'Drone giao hàng',summary:'Quán bắt đầu kết nối với phố.',visual:'delivery'},
+      {id:'secondFloor',level:10,title:'Tầng 2',summary:'Thêm không gian và khách mới.',visual:'secondFloor'},
+      {id:'rooftop',level:15,title:'Rooftop',summary:'Mở không gian view đẹp.',visual:'rooftop'},
+      {id:'robot',level:20,title:'Robot barista',summary:'Quán hiện đại và tự động hơn.',visual:'robot'},
+      {id:'mega',level:30,title:'Mega cafe',summary:'Đế chế cà phê của bạn thành hình.',visual:'mega'}
+    ];
+  }
+  function ensureStoreViewStructure(){
+    const shopView=document.getElementById('view-shop');
+    if(!shopView || shopView.dataset.ready==='true')return;
+    const milestones=storeMilestones();
+    const level=Number(state.level)||1;
+    const unlocked=milestones.filter(item=>level>=item.level);
+    const current=unlocked[unlocked.length-1]||milestones[0];
+    const next=milestones.find(item=>level<item.level)||milestones[0];
+    const nextName = next.title;
+    shopView.innerHTML=`
+      <div class="view-heading"><div><div class="eyebrow">◆ CỬA HÀNG · XÂY DỰNG</div><h2>NEON BREW</h2><p>Store Exterior, development, upgrades và visual progression.</p></div><span class="tag-chip" id="shopLevelBadge">STORE LV ${String(level).padStart(2,'0')}</span></div>
+      <div class="shop-layout">
+        <div class="shop-visual-panel">
+          <div class="shop-header-row"><span>QUÁN BÊN NGOÀI</span><span id="shopLevelText">STORE LV ${String(level).padStart(2,'0')}</span></div>
+          <div class="store-exterior-scene" id="storeExteriorScene" data-tier="${current.visual||'small'}">
+            <div class="store-sky"></div>
+            <div class="store-sign">NEON BREW</div>
+            <div class="store-window"></div>
+            <div class="store-counter"></div>
+            <div class="store-door"></div>
+            <div class="store-tables"></div>
+            <div class="store-drone"></div>
+            <div class="store-second-floor"></div>
+            <div class="store-rooftop"></div>
+            <div class="store-robot"></div>
+          </div>
+          <div class="store-exterior-status">
+            <div class="store-status-heading"><span class="status-badge" id="storeExteriorTitle">${current.title.toUpperCase()}</span><span class="status-progress" id="storeExteriorProgress">${unlocked.length} / ${milestones.length}</span></div>
+            <div class="store-progress-line"><i id="storeExteriorMeter" style="width:${Math.min(100,Math.round((unlocked.length/milestones.length)*100))}%"></i></div>
+            <div class="store-feature-list" id="storeFeatureList"><span>${unlocked.slice(-4).map(item=>item.title).join('</span><span>')}</span>${next ? '<span class="next-feature">NEXT: '+nextName+'</span>' : ''}</div>
+          </div>
+        </div>
+        <div class="shop-info-panel">
+          <div class="feature-panel"><div class="panel-heading"><h2>Phát triển</h2><span class="mono">MILESTONE</span></div><div class="feature-body"><div class="milestone-list" id="shopMilestoneList">${milestones.map(item=>`<div class="milestone-item ${level>=item.level?'unlocked':'locked'}"><span>${level>=item.level?'✓':'•'}</span><div><strong>${item.title}</strong><small>${item.summary}</small></div></div>`).join('')}</div></div></div>
+          <div class="feature-panel"><div class="panel-heading"><h2>Nâng cấp</h2><span class="mono">UPGRADES</span></div><div class="feature-body"><div class="upgrade-list" id="shopUpgradeList"><div class="upgrade-card"><h3>NEON SIGN</h3><p>+10% khách, biển neon rõ ràng.</p><button class="action-btn" type="button">XEM TRƯỚC</button></div><div class="upgrade-card"><h3>SECOND FLOOR</h3><p>Thêm tầng mới cho cửa hàng.</p><button class="action-btn" type="button">XEM TRƯỚC</button></div></div></div></div>
+        </div>
+      </div>
+    `;
+    shopView.dataset.ready='true';
+  }
+  function renderStoreExterior(){
+    ensureStoreViewStructure();
+    const milestones=storeMilestones();
+    const level=Number(state.level)||1;
+    const unlocked=milestones.filter(item=>level>=item.level);
+    const current=unlocked[unlocked.length-1]||milestones[0];
+    const next=milestones.find(item=>level<item.level)||null;
+    const scene=document.getElementById('storeExteriorScene');
+    const progress=document.getElementById('storeExteriorProgress');
+    const meter=document.getElementById('storeExteriorMeter');
+    const title=document.getElementById('storeExteriorTitle');
+    const levelBadge=document.getElementById('shopLevelBadge');
+    const levelText=document.getElementById('shopLevelText');
+    const featureList=document.getElementById('storeFeatureList');
+    if(scene)scene.dataset.tier=current.visual||'small';
+    const percent=Math.min(100,Math.round((unlocked.length/milestones.length)*100));
+    if(progress)progress.textContent=`${unlocked.length} / ${milestones.length}`;
+    if(meter)meter.style.width=`${percent}%`;
+    if(title)title.textContent=current.title.toUpperCase();
+    if(levelBadge)levelBadge.textContent=`STORE LV ${String(level).padStart(2,'0')}`;
+    if(levelText)levelText.textContent=`STORE LV ${String(level).padStart(2,'0')}`;
+    const features = unlocked.slice(-4).map(item=>item.title);
+    if(featureList){featureList.innerHTML = features.length ? features.map(item=>`<span>${item}</span>`).join('') : '<span>Quầy mới mở</span>';
+      if(next){featureList.innerHTML += `<span class="next-feature">NEXT: ${next.title}</span>`;}}
+  }
   function renderFeatureViews(){
     const researchSelects=[$('ingredientA'),$('ingredientB'),$('ingredientC')];
     researchSelects.forEach((select,index)=>{
@@ -361,6 +439,7 @@
       for(const option of select.options)option.disabled=(Number(state.inventory[option.value])||0)<1;
     });
     renderResearchView();renderCityView();renderJukeboxView();renderArchiveView();
+    renderStoreExterior();
     const rate = deliveryRate();
     const rateElement = $('deliveryRate');
     const statusElement = $('deliveryStatus');
@@ -396,6 +475,12 @@
     $('progressComboValue').textContent=`x${Math.max(0,Number(state.combo)||0)}`;
     $('progressComboBonus').textContent=`+${comboBonusPercent()}% REWARD`;
     $('moneyValue').textContent='₫ '+format(state.money);$('servedValue').textContent=format(state.served);const stars=window.NEON_BREW_RENDER.stars(state.starRating);$('repValue').innerHTML=`${Math.round(state.reviewScore)} <small>/ 100</small><div class="star-row">${stars}</div>`;$('repTrend').textContent='MỨC HÀI LÒNG';$('shiftOrderValue').textContent=`${state.shiftOrders}`;$('shiftServedValue').textContent=`${state.shiftServed} ly`;$('shiftProgressValue').textContent=`${state.shiftOrders}`;$('shiftRevenueValue').textContent=`₫${format(state.shiftRevenue)}`;$('shiftStatus').textContent=state.shiftClosed?'ĐÃ ĐÓNG':'ĐANG MỞ';
+    if($('homeMoney'))$('homeMoney').textContent='₫ '+format(state.money);
+    if($('homeRep'))$('homeRep').textContent=`${Math.round(state.reviewScore)} / 100`;
+    if($('homeServed'))$('homeServed').textContent=format(state.served);
+    if($('homeLevel'))$('homeLevel').textContent=`LV ${state.level}`;
+    if($('homeGoalText')){$('homeGoalText').textContent=`${Math.min(state.served,10)} / 10`;}
+    if($('homeGoalMeter'))$('homeGoalMeter').style.width=`${Math.min(100,(state.served/10)*100)}%`;
     const requested=recipeById(state.orderId),visitor=factions.find(item=>item.id===state.orderFaction)||factions[0],guest=customerById(state.currentCustomerId),guestName=guest?.name||visitor.name,loyalty=getIndividualCustomerLoyalty(),comboValue=Number(state.combo)||0,tip=tipRateFromQuality(Math.max(0,Math.min(100,Number(state.reviewScore)||0))),moveAhead=Math.max(0,Math.min(100,Math.round((state.orderExpires-Date.now())/Math.max(1,(state.orderExpires-state.orderStarted||30000))*100)));$('orderIcon').textContent=guest?.type==='robot'?'🤖':visitor.icon;$('orderName').textContent=requested.name;$('orderRecipe').textContent=`${guestName} · ${visitor.name} · ${requested.recipe}`;$('orderPay').innerHTML=`+₫${format(orderReward())}<small>${customerLikes(requested)?`đúng gu · ${qualityBand(Math.min(95,80+loyalty/2))} · tip ${Math.round(tip*100)}%`:`giá dự kiến · combo x${comboValue} · tip ${Math.round(tip*100)}%`}</small>`;$('orderNumber').textContent=`ĐƠN #${String(state.orderNumber).padStart(3,'0')}`;const brewHint=$('brewHint');if(brewHint){const spec=state.orderSpec||{},targetPrefix=state.currentOrder?.dialogue||(customerLikes(requested)?'HỢP GU':'MỤC TIÊU');brewHint.innerHTML=`<span>${targetPrefix}</span><strong>${guestName.toUpperCase()} · ${requested.name.toUpperCase()} · SIZE ${spec.size||'M'} · ĐƯỜNG ${Number(spec.sugar??50)}% · ĐÁ ${Number(spec.ice??50)}% · LOYALTY ${loyalty}% · ${qualityBand(Math.max(0,60+comboValue*8))} · ${moveAhead}% GIỜ</strong>`;}
     $('factionGuestIcon').textContent=guest?.type==='robot'?'🤖':visitor.icon;$('factionGuestType').textContent=guest?.type?.toUpperCase()||visitor.name.toUpperCase();$('factionGuestName').textContent=guestName;$('factionGuestMood').textContent=`${visitor.name} · ${guest?.favoriteDrink===state.orderId?'MÓN ƯA THÍCH':'ĐANG CHỜ PHỤC VỤ'}`;
     updateCafeStatus();
@@ -407,6 +492,7 @@
     renderHudCommon();
     renderRecipes();
     renderFeatureViews();
+    renderStoreExterior();
   }
   function renderLive(){
     renderHudCommon();
@@ -694,7 +780,9 @@
     updateBrewSequenceUI();
   }
 
-  document.querySelectorAll('.game-tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.game-tab').forEach(tab=>{tab.classList.toggle('active',tab===button);tab.setAttribute('aria-selected',String(tab===button))});document.querySelectorAll('.view-page').forEach(view=>view.classList.toggle('active',view.id===`view-${button.dataset.view}`));if(guidedOutside)updateTutorialTarget();document.body.classList.add('glitch');setTimeout(()=>document.body.classList.remove('glitch'),180)}));$('settingsShortcut').addEventListener('click',()=>{document.querySelector('.game-tab[data-view="settings"]').click();$('view-settings').scrollIntoView({block:'start',behavior:'smooth'})});$('settingsReturn').addEventListener('click',()=>{document.querySelector('.game-tab[data-view="shop"]').click();$('view-shop').scrollIntoView({block:'start',behavior:'smooth'})});
+  document.querySelectorAll('.game-tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.game-tab').forEach(tab=>{tab.classList.toggle('active',tab===button);tab.setAttribute('aria-selected',String(tab===button))});const pageId=`view-${button.dataset.view}`;document.querySelectorAll('.view-page').forEach(view=>view.classList.toggle('active',view.id===pageId));if(guidedOutside)updateTutorialTarget();document.body.classList.add('glitch');setTimeout(()=>document.body.classList.remove('glitch'),180)}));
+  document.querySelectorAll('[data-view-go]').forEach(button=>button.addEventListener('click',()=>{const target=document.querySelector(`.game-tab[data-view="${button.dataset.viewGo}"]`);if(target)target.click();}));
+  $('settingsShortcut').addEventListener('click',()=>{document.querySelector('.game-tab[data-view="more"]').click();$('view-more').scrollIntoView({block:'start',behavior:'smooth'})});$('settingsReturn').addEventListener('click',()=>{document.querySelector('.game-tab[data-view="serve"]').click();$('view-serve').scrollIntoView({block:'start',behavior:'smooth'})});
   $('researchButton').addEventListener('click',craftResearch);['ingredientA','ingredientB','ingredientC'].forEach(id=>$(id).addEventListener('change',renderFeatureViews));$('ingredientStock').addEventListener('click',event=>{const buy=event.target.closest('[data-buy-ingredient]'),recycle=event.target.closest('[data-recycle-waste]');if(buy)buyIngredient(buy.dataset.buyIngredient);if(recycle)recycleWaste()});$('decorGrid').addEventListener('click',event=>{const button=event.target.closest('[data-buy-decor]');if(button)buyDecor(button.dataset.buyDecor)});$('trackList').addEventListener('click',event=>{const button=event.target.closest('[data-track]');if(button)buyTrack(button.dataset.track)});$('questList').addEventListener('click',event=>{if(event.target.closest('[data-action="claim-quest"]'))claimDaily()});
   $('pourWaterBtn').addEventListener('click',hitBrewStep);
   $('finishBrewBtn').addEventListener('click',()=>{if(!interactiveBrew||interactiveBrew.stage<interactiveBrew.steps.length){toast('Hoàn tất từng bước pha trước khi giao ly.');return;}completeInteractiveBrew();});
@@ -744,7 +832,7 @@
     if(current%5000<1000)save();
   }
   $('endShiftButton').addEventListener('click',closeShift);$('nextShiftButton').addEventListener('click',openNextShift);
-  $('resetButton').addEventListener('click',()=>$('resetDialog').classList.add('show'));$('cancelReset').addEventListener('click',()=>$('resetDialog').classList.remove('show'));$('confirmReset').addEventListener('click',()=>{saveManager.clear(localStorage,[STORE_KEY,BACKUP_SAVE_KEY]);location.reload()});$('gameOverReset').addEventListener('click',()=>{saveManager.clear(localStorage,[STORE_KEY,BACKUP_SAVE_KEY]);location.reload()});$('resetDialog').addEventListener('click',event=>{if(event.target===$('resetDialog'))$('resetDialog').classList.remove('show')});document.addEventListener('keydown',event=>{if(event.key==='Escape')$('resetDialog').classList.remove('show')});
+  $('resetButton').addEventListener('click',()=>$('resetDialog').classList.add('show'));$('cancelReset').addEventListener('click',()=>$('resetDialog').classList.remove('show'));$('confirmReset').addEventListener('click',()=>{saveManager.clear([STORE_KEY,BACKUP_SAVE_KEY], localStorage);location.reload()});$('gameOverReset').addEventListener('click',()=>{saveManager.clear([STORE_KEY,BACKUP_SAVE_KEY], localStorage);location.reload()});$('resetDialog').addEventListener('click',event=>{if(event.target===$('resetDialog'))$('resetDialog').classList.remove('show')});document.addEventListener('keydown',event=>{if(event.key==='Escape')$('resetDialog').classList.remove('show')});
   function playAudioStep(){if(!audioContext)return;const notes=(tracks.find(item=>item.id===state.trackId)||tracks[0]).notes,time=audioContext.currentTime;const osc=audioContext.createOscillator(),gain=audioContext.createGain(),filter=audioContext.createBiquadFilter();osc.type='sine';osc.frequency.value=notes[audioStep%notes.length];filter.type='lowpass';filter.frequency.value=900;gain.gain.setValueAtTime(.0001,time);gain.gain.exponentialRampToValueAtTime(.022,time+.08);gain.gain.exponentialRampToValueAtTime(.0001,time+.72);osc.connect(filter);filter.connect(gain);gain.connect(audioContext.destination);osc.start(time);osc.stop(time+.75);if(audioStep%4===0){const bass=audioContext.createOscillator(),bassGain=audioContext.createGain();bass.type='sine';bass.frequency.value=notes[audioStep%notes.length]/2;bassGain.gain.setValueAtTime(.0001,time);bassGain.gain.exponentialRampToValueAtTime(.018,time+.08);bassGain.gain.exponentialRampToValueAtTime(.0001,time+.62);bass.connect(bassGain);bassGain.connect(audioContext.destination);bass.start(time);bass.stop(time+.65)}audioStep++}
   function toggleAudio(){if(state.audio){state.audio=false;clearInterval(audioLoop);if(audioContext){audioContext.close();audioContext=null}render();save();return}const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio){toast('Trình duyệt này chưa hỗ trợ phát nhạc.');return}audioContext=new Audio();audioContext.resume();audioStep=0;state.audio=true;playAudioStep();audioLoop=setInterval(playAudioStep,850);render();save();vibrate([15])}
   $('soundToggle').addEventListener('click',toggleAudio);$('fullscreenToggle').addEventListener('click',toggleFullscreen);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});window.addEventListener('online',updateConnectionStatus);window.addEventListener('offline',updateConnectionStatus);window.addEventListener('beforeunload',event=>{if(sessionStarted && !state.gameOver && !isResetting){event.preventDefault();event.returnValue='';}});if('serviceWorker' in navigator&&window.isSecureContext&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js').catch(()=>{})}

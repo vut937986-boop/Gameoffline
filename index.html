@@ -46,16 +46,30 @@
     <div class="stat"><div class="stat-label"><span class="stat-icon">☕</span> ĐƠN TRONG CA</div><div class="stat-value" id="shiftOrderValue">0</div><span class="stat-trend">HÔM NAY</span></div>
   </section>
   <nav class="game-tabs" role="tablist" aria-label="Khu vực trò chơi">
-    <button class="game-tab active" role="tab" aria-selected="true" data-view="shop"><span>01</span>QUẦY</button>
-    <button class="game-tab" role="tab" aria-selected="false" data-view="research"><span>02</span>PHÒNG THÍ NGHIỆM</button>
-    <button class="game-tab" role="tab" aria-selected="false" data-view="city"><span>03</span>THÀNH PHỐ</button>
-    <button class="game-tab" role="tab" aria-selected="false" data-view="jukebox"><span>04</span>JUKEBOX</button>
-    <button class="game-tab" role="tab" aria-selected="false" data-view="archive"><span>05</span>NHIỆM VỤ & LƯU</button>
-    <button class="game-tab" role="tab" aria-selected="false" data-view="settings"><span>06</span>CÀI ĐẶT</button>
+    <button class="game-tab active" role="tab" aria-selected="true" data-view="home"><span>01</span>HOME</button>
+    <button class="game-tab" role="tab" aria-selected="false" data-view="serve"><span>02</span>SERVE</button>
+    <button class="game-tab" role="tab" aria-selected="false" data-view="shop"><span>03</span>SHOP</button>
+    <button class="game-tab" role="tab" aria-selected="false" data-view="city"><span>04</span>CITY</button>
+    <button class="game-tab" role="tab" aria-selected="false" data-view="more"><span>05</span>MORE</button>
   </nav>
   <div class="matrix-alert" id="matrixAlert" role="status"><strong>GLITCH IN THE MATRIX · <span id="matrixTime">10</span>S · VÒNG <span id="matrixCycle">1</span>/3</strong><span>Thu nhập trong vòng lặp được nhân 3.</span></div>
   <div class="matrix-alert" id="bulkOrderAlert" role="status"><strong id="bulkOrderText">ĐƠN CORPORATE</strong><span>Mỗi món hoàn tất giảm tiến độ; đủ 5 món nhận ₫500.</span></div>
-  <section class="view-page active" id="view-shop" role="tabpanel">
+  <section class="view-page active" id="view-home" role="tabpanel" aria-label="Home overview">
+    <div class="view-heading"><div><div class="eyebrow">◆ NEON BREW · HÔM NAY</div><h2>Quán của bạn</h2><p>Home = tổng quan, Serve = pha chế, Shop = xây quán.</p></div></div>
+    <div class="feature-grid">
+      <section class="feature-panel"><div class="panel-heading"><h2>Tổng quan</h2><span class="mono">LIVE</span></div><div class="feature-body">
+        <div class="stat-row"><span>Số dư</span><strong id="homeMoney">₫0</strong></div>
+        <div class="stat-row"><span>Khách hài lòng</span><strong id="homeRep">0 / 100</strong></div>
+        <div class="stat-row"><span>Khách đã phục vụ</span><strong id="homeServed">0</strong></div>
+        <div class="stat-row"><span>Store Level</span><strong id="homeLevel">LV 1</strong></div>
+      </div></section>
+      <section class="feature-panel"><div class="panel-heading"><h2>Mục tiêu hôm nay</h2><span class="mono">DAILY</span></div><div class="feature-body">
+        <div class="quest-item"><div class="quest-title">☕ Phục vụ 10 khách</div><div class="quest-meta"><span id="homeGoalText">0 / 10</span></div><div class="quest-meter"><i id="homeGoalMeter" style="width:0%"></i></div></div>
+        <button class="action-btn primary" data-view-go="serve" type="button">BẮT ĐẦU PHA</button>
+      </div></section>
+    </div>
+  </section>
+  <section class="view-page" id="view-serve" role="tabpanel">
   <div class="main-grid">
     <div class="left-stack">
       <section class="scene-panel" aria-label="Quầy cà phê hiện đại"><div class="scene-topline"><span class="scene-status" id="sceneStatus"><i class="live-dot"></i>QUẦY PHA CHẾ · ĐANG MỞ</span><span class="scene-location">NEON BREW / 01</span></div><div class="scene-wrap"><canvas id="cafeScene" width="900" height="420" aria-label="Không gian quầy cà phê buổi sáng"></canvas><span class="scene-caption">MỘT LY NGON BẮT ĐẦU TỪ QUẦY CỦA BẠN.</span><span class="scene-time" id="sceneClock">08:00</span></div></section>
@@ -67,6 +81,35 @@
       <section class="panel side-panel shift-counter"><div class="panel-heading"><h2>Tổng quan ca</h2><span class="mono" id="shiftStatus">ĐANG MỞ</span></div><div class="shift-counter-row"><span>Đã phục vụ</span><strong id="shiftServedValue">0 ly</strong></div><div class="shift-counter-row"><span>Đơn đã xử lý</span><strong id="shiftProgressValue">0</strong></div><div class="shift-counter-row"><span>Doanh thu ca</span><strong id="shiftRevenueValue">₫0</strong></div></section>
     </aside>
   </div>
+  </section>
+  <section class="view-page" id="view-shop" role="tabpanel" aria-label="Cửa hàng và phát triển">
+    <div class="view-heading"><div><div class="eyebrow">◆ CỬA HÀNG · XÂY DỰNG</div><h2>NEON BREW</h2><p>Store Exterior, development, upgrades và visual progression.</p></div><span class="tag-chip" id="shopLevelBadge">STORE LV 01</span></div>
+    <div class="shop-layout">
+      <div class="shop-visual-panel">
+        <div class="shop-header-row"><span>QUÁN BÊN NGOÀI</span><span id="shopLevelText">STORE LV 01</span></div>
+        <div class="store-exterior-scene" id="storeExteriorScene" data-tier="small">
+          <div class="store-sky"></div>
+          <div class="store-sign">NEON BREW</div>
+          <div class="store-window"></div>
+          <div class="store-counter"></div>
+          <div class="store-door"></div>
+          <div class="store-tables"></div>
+          <div class="store-drone"></div>
+          <div class="store-second-floor"></div>
+          <div class="store-rooftop"></div>
+          <div class="store-robot"></div>
+        </div>
+        <div class="store-exterior-status">
+          <div class="store-status-heading"><span class="status-badge" id="storeExteriorTitle">QUÁN NHỎ</span><span class="status-progress" id="storeExteriorProgress">1 / 9</span></div>
+          <div class="store-progress-line"><i id="storeExteriorMeter"></i></div>
+          <div class="store-feature-list" id="storeFeatureList"></div>
+        </div>
+      </div>
+      <div class="shop-info-panel">
+        <div class="feature-panel"><div class="panel-heading"><h2>Phát triển</h2><span class="mono">MILESTONE</span></div><div class="feature-body"><div class="milestone-list" id="shopMilestoneList"></div></div></div>
+        <div class="feature-panel"><div class="panel-heading"><h2>Nâng cấp</h2><span class="mono">UPGRADES</span></div><div class="feature-body"><div class="upgrade-list" id="shopUpgradeList"></div></div></div>
+      </div>
+    </div>
   </section>
   <section class="view-page" id="view-research" role="tabpanel" aria-label="Phòng thí nghiệm công thức">
     <div class="view-heading"><div><div class="eyebrow">◆ XƯỞNG PHA CHẾ · THỬ NGHIỆM</div><h2>Phòng thí nghiệm công thức</h2><p>Kết hợp nguyên liệu để khám phá món mới. Thử nghiệm có rủi ro.</p></div><span class="tag-chip" id="researchOdds">65% THÀNH CÔNG</span></div>
@@ -97,6 +140,10 @@
     <div class="view-heading"><div><div class="eyebrow">◆ HỒ SƠ BARISTA · LƯU CỤC BỘ</div><h2>Nhiệm vụ & lưu trữ</h2><p>Hoàn thành mục tiêu, giữ bản sao tiến trình và tái khởi động với Quantum Chips.</p></div><button class="crt-toggle" id="crtToggle" aria-pressed="false">CRT: TẮT</button></div>
     <div class="archive-split"><section class="feature-panel"><div class="panel-heading"><h2>Nhiệm vụ hôm nay</h2><span class="mono" id="dailyDate">HÔM NAY</span></div><div class="feature-body"><div class="quest-list" id="questList"></div></div></section><section class="feature-panel"><div class="panel-heading"><h2>Huy hiệu thành tựu</h2><span class="mono" id="badgeCount">0 / 3</span></div><div class="feature-body"><div class="badge-grid" id="badgeGrid"></div></div></section></div>
     <div class="archive-split" style="margin-top:14px"><section class="feature-panel"><div class="panel-heading"><h2>Quantum Chips</h2><span class="mono" id="prestigeCount">0 LẦN TÁI SINH</span></div><div class="feature-body"><div class="prestige-row"><span class="level-badge" id="chipBalance">◇ 0 QC</span><button class="action-btn" id="prestigeButton" disabled>CHUYỂN SINH · 200 LY + 1 QC</button></div><p class="tipline" id="prestigeInfo">Khởi động lại cửa hàng để nhận hệ số doanh thu vĩnh viễn. Cần 200 ly và 1 Quantum Chip.</p></div></section><section class="feature-panel"><div class="panel-heading"><h2>Sao lưu & chuyển máy</h2><span class="mono">JSON · BASE64</span></div><div class="feature-body"><label class="field-label" for="saveText">MÃ LƯU TIẾN TRÌNH</label><textarea id="saveText" class="save-text" spellcheck="false" placeholder="Xuất mã lưu để sao lưu hoặc dán mã từ thiết bị khác."></textarea><div class="save-actions"><button class="action-btn" id="exportSave">XUẤT MÃ</button><button class="action-btn" id="copySave">SAO CHÉP</button><button class="action-btn" id="importSave">NHẬP MÃ</button></div><p class="tipline" id="saveMessage">Mã lưu chứa toàn bộ tiến trình của tiệm trên thiết bị này.</p></div></section></div>
+  </section>
+  <section class="view-page" id="view-more" role="tabpanel" aria-label="Nhiệm vụ, thành tựu và cài đặt">
+    <div class="archive-split"><section class="feature-panel"><div class="panel-heading"><h2>Nhiệm vụ hôm nay</h2><span class="mono" id="dailyDateMore">HÔM NAY</span></div><div class="feature-body"><div class="quest-list" id="questListMore"></div></div></section><section class="feature-panel"><div class="panel-heading"><h2>Huy hiệu thành tựu</h2><span class="mono" id="badgeCountMore">0 / 3</span></div><div class="feature-body"><div class="badge-grid" id="badgeGridMore"></div></div></section></div>
+    <div class="archive-split" style="margin-top:14px"><section class="feature-panel"><div class="panel-heading"><h2>Quantum Chips</h2><span class="mono" id="prestigeCountMore">0 LẦN TÁI SINH</span></div><div class="feature-body"><div class="prestige-row"><span class="level-badge" id="chipBalanceMore">◇ 0 QC</span><button class="action-btn" id="prestigeButtonMore" disabled>CHUYỂN SINH</button></div><p class="tipline" id="prestigeInfoMore">Khởi động lại cửa hàng để nhận hệ số doanh thu vĩnh viễn.</p></div></section><section class="feature-panel"><div class="panel-heading"><h2>Cài đặt</h2><span class="mono">GIAO DIỆN</span></div><div class="feature-body"><label class="settings-field"><span class="field-label">CHỦ ĐỀ</span><select id="themeSelectMore" aria-label="Chọn chủ đề"><option value="neon">Đêm Neon</option><option value="blood">Huyết Nguyệt</option><option value="fog">Sương Mù</option></select></label><label class="settings-field"><span class="field-label">NGÔN NGỮ</span><select id="languageSelectMore" aria-label="Chọn ngôn ngữ"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></label></div></section></div>
   </section>
   <section class="view-page" id="view-settings" role="tabpanel" aria-label="Cài đặt giao diện và ngôn ngữ">
     <div class="view-heading"><div><div class="eyebrow">◆ TUỲ CHỈNH CA ĐÊM</div><h2>Cài đặt</h2><p>Chọn giao diện, ngôn ngữ và điều khiển quán.</p></div><button class="action-btn" id="settingsReturn" type="button">← VỀ QUẦY</button></div>
