@@ -1,0 +1,17 @@
+{
+  "name": "neon-brew-mobile",
+  "version": "1.0.2",
+  "private": true,
+  "description": "Android packaging for the NEON BREW offline cafe game",
+  "scripts": {
+    "mobile:assets": "node scripts/prepare-mobile.cjs",
+    "build:android": "node scripts/build-android.cjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/core": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0"
+  }
+}
